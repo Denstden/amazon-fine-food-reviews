@@ -15,6 +15,7 @@ import org.apache.spark.sql.SQLContext;
 import java.util.Arrays;
 
 import static com.axondevgroup.reviews.food.util.Constants.APP_NAME;
+import static com.axondevgroup.reviews.food.util.Constants.ONE_THOUSAND;
 import static com.axondevgroup.reviews.food.util.Constants.SPARK_MASTER;
 import static org.apache.spark.sql.functions.*;
 
@@ -24,6 +25,7 @@ import static org.apache.spark.sql.functions.*;
  * @author Denys Storozhenko
  */
 public class SparkFoodReviewsAnalyzer {
+    private static final String WORD_SPLIT_PATTERN = "\\W+";
     private static final ReviewToOptimizedTextFunction REVIEW_TO_OPTIMIZED_TEXT_FUNCTION =
             new ReviewToOptimizedTextFunction();
 
@@ -37,11 +39,11 @@ public class SparkFoodReviewsAnalyzer {
 
         sparkContext = new JavaSparkContext(sparkConf);
 
-        parser = new CsvReviewParser();
+        parser = new CsvReviewParser(sparkContext);
     }
 
     public void analyze(String fileName, boolean needTranslate) {
-        JavaRDD<Review> reviews = parser.parse(sparkContext, fileName);
+        JavaRDD<Review> reviews = parser.parse(fileName);
 
         analyzeReviews(reviews);
         analyzeWordsInReviews(reviews);
@@ -66,8 +68,8 @@ public class SparkFoodReviewsAnalyzer {
         dataset.groupBy("profileName")
                 .count()
                 .orderBy(desc("count"), asc("profileName"))
-                .limit(1000)
-                .show(1000, false);
+                .limit(ONE_THOUSAND)
+                .show(ONE_THOUSAND, false);
     }
 
     private void showMostCommentedFoodItems(Dataset<Row> dataset) {
@@ -75,13 +77,13 @@ public class SparkFoodReviewsAnalyzer {
         dataset.groupBy("productId")
                 .agg(count("text").alias("cnt"))
                 .orderBy(desc("cnt"), asc("productId"))
-                .limit(1000)
-                .show(1000, false);
+                .limit(ONE_THOUSAND)
+                .show(ONE_THOUSAND, false);
     }
 
     private void analyzeWordsInReviews(JavaRDD<Review> reviews) {
         JavaRDD<WordWrapper> words = reviews
-                .flatMap(e -> Arrays.asList(e.getText().split("\\W+")).iterator())
+                .flatMap(e -> Arrays.asList(e.getText().split(WORD_SPLIT_PATTERN)).iterator())
                 .filter(word -> word.trim().length() != 0)
                 .map(WordWrapper::new);
 
@@ -92,7 +94,7 @@ public class SparkFoodReviewsAnalyzer {
         dataFrame.groupBy("value")
                 .count()
                 .orderBy(desc("count"), asc("value"))
-                .limit(1000)
-                .show(1000, false);
+                .limit(ONE_THOUSAND)
+                .show(ONE_THOUSAND, false);
     }
 }

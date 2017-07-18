@@ -13,7 +13,13 @@ import org.apache.spark.api.java.JavaSparkContext;
 public class CsvReviewParser {
     private static final StringToReviewFunction STRING_TO_REVIEW_FUNCTION = new StringToReviewFunction();
 
-    public JavaRDD<Review> parse(JavaSparkContext sparkContext, String fileName) {
+    private JavaSparkContext sparkContext;
+
+    public CsvReviewParser(JavaSparkContext sparkContext) {
+        this.sparkContext = sparkContext;
+    }
+
+    public JavaRDD<Review> parse(String fileName) {
         JavaRDD<String> lines = sparkContext.textFile(fileName);
 
         String header = lines.first();
