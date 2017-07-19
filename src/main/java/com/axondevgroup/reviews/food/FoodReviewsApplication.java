@@ -44,6 +44,7 @@ public class FoodReviewsApplication {
         } else if (splitted[0].equalsIgnoreCase(TRANSLATE_COMMAND_LINE_PARAMETER_NAME)) {
             needTranslate = Boolean.valueOf(splitted[1]);
         } else {
+            //commented to allow other parameters
             //throw new InvalidCommandLineArgumentException(splitted[0]);
         }
     }
