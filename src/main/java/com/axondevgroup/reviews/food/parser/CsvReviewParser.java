@@ -5,13 +5,16 @@ import com.axondevgroup.reviews.food.model.Review;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import java.io.Serializable;
+
 /**
  * Class for parsing Reviews from CSV file.
  *
  * @author Denys Storozhenko
  */
-public class CsvReviewParser {
+public class CsvReviewParser implements Serializable {
     private static final StringToReviewFunction STRING_TO_REVIEW_FUNCTION = new StringToReviewFunction();
+    private static final Integer MIN_PARTITIONS = 4;
 
     private JavaSparkContext sparkContext;
 
@@ -20,7 +23,7 @@ public class CsvReviewParser {
     }
 
     public JavaRDD<Review> parse(String fileName) {
-        JavaRDD<String> lines = sparkContext.textFile(fileName);
+        JavaRDD<String> lines = sparkContext.textFile(fileName, MIN_PARTITIONS);
 
         String header = lines.first();
         return lines

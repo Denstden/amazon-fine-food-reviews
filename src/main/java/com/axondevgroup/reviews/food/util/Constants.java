@@ -7,7 +7,7 @@ package com.axondevgroup.reviews.food.util;
  */
 public class Constants {
     public static final String APP_NAME = "Food reviews analyzer";
-    public static final String SPARK_MASTER = "local";
+    public static final String SPARK_MASTER = "local[4]";
     public static final Integer ZERO = 0;
     public static final Integer ONE = 1;
     public static final Integer ONE_THOUSAND = 1000;

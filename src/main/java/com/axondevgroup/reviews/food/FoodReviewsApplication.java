@@ -2,6 +2,8 @@ package com.axondevgroup.reviews.food;
 
 import com.axondevgroup.reviews.food.exception.InvalidCommandLineArgumentException;
 
+import java.io.IOException;
+
 /**
  * Entry point to the application.
  *
@@ -21,7 +23,7 @@ public class FoodReviewsApplication {
     // command line arguments :
     // file=<fileName>|<fullPathToFile> - csv file with data, not required, if not defined - file PATH_TO_DEFAULT_FILE will be used
     // translate=true                   - flag which determines need to execute translation or no (true = need), not required, default = false
-    public static void main(String[] args) throws InvalidCommandLineArgumentException {
+    public static void main(String[] args) throws InvalidCommandLineArgumentException, IOException {
         System.setProperty(HADOOP_HOME_PROPERTY_NAME, HADOOP_HOME_PROPERTY_VALUE);
 
         if (args.length > 0) {
@@ -31,6 +33,8 @@ public class FoodReviewsApplication {
         }
 
         new SparkFoodReviewsAnalyzer().analyze(pathToFile, needTranslate);
+
+        System.out.println(1);
     }
 
     private static void parseCommandLineArgument(String argument) throws InvalidCommandLineArgumentException {
@@ -40,7 +44,7 @@ public class FoodReviewsApplication {
         } else if (splitted[0].equalsIgnoreCase(TRANSLATE_COMMAND_LINE_PARAMETER_NAME)) {
             needTranslate = Boolean.valueOf(splitted[1]);
         } else {
-            throw new InvalidCommandLineArgumentException(splitted[0]);
+            //throw new InvalidCommandLineArgumentException(splitted[0]);
         }
     }
 }
